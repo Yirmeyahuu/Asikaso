@@ -135,8 +135,8 @@ function DepartmentModal({ department, onSave, onClose }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-      <div className="card w-full max-w-md p-6 m-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center glass-modal-overlay">
+      <div className="glass-modal-content w-full max-w-md p-6 m-4">
         <h2 className="text-xl font-bold text-text-primary mb-4">
           {department ? 'Edit Department' : 'New Department'}
         </h2>
@@ -147,7 +147,7 @@ function DepartmentModal({ department, onSave, onClose }: {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input w-full"
+              className="glass-input w-full"
               required
             />
           </div>
@@ -156,12 +156,12 @@ function DepartmentModal({ department, onSave, onClose }: {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="input w-full h-24"
+              className="glass-input w-full h-24"
             />
           </div>
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>
-            <button type="submit" className="btn btn-primary">Save</button>
+            <button type="button" onClick={onClose} className="glass-btn">Cancel</button>
+            <button type="submit" className="glass-btn glass-btn-primary">Save</button>
           </div>
         </form>
       </div>

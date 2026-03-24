@@ -582,8 +582,8 @@ const Calendar = () => {
 
       {/* Event Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-          <div className="card p-4 sm:p-6 w-full max-w-sm sm:max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-modal-overlay">
+          <div className="glass-modal-content p-4 sm:p-6 w-full max-w-sm sm:max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-text-primary">
                 {selectedEvent ? 'Event Details' : 'Create Event'}
@@ -634,11 +634,11 @@ const Calendar = () => {
                 </div>
                 <div className="flex gap-2 pt-4">
                   {selectedEvent.status === 'pending' && (
-                    <button className="btn btn-primary flex-1">
+                    <button className="glass-btn glass-btn-primary flex-1">
                       Mark Complete
                     </button>
                   )}
-                  <button className="btn btn-secondary flex-1">
+                  <button className="glass-btn flex-1">
                     Edit
                   </button>
                 </div>
@@ -655,7 +655,7 @@ const Calendar = () => {
                   <label className="block text-sm font-medium text-text-secondary mb-1">Event Title</label>
                   <input 
                     type="text" 
-                    className="input w-full" 
+                    className="glass-input w-full" 
                     placeholder="Enter event title" 
                     value={newEventTitle}
                     onChange={(e) => setNewEventTitle(e.target.value)}
@@ -664,7 +664,7 @@ const Calendar = () => {
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">Event Type</label>
                   <select 
-                    className="input w-full"
+                    className="glass-input w-full"
                     value={newEventType}
                     onChange={(e) => setNewEventType(e.target.value as 'task' | 'meeting' | 'event')}
                   >
@@ -678,7 +678,7 @@ const Calendar = () => {
                     <label className="block text-sm font-medium text-text-secondary mb-1">Start Date</label>
                     <input 
                       type="date" 
-                      className="input w-full" 
+                      className="glass-input w-full" 
                       value={newEventStartDate}
                       onChange={(e) => setNewEventStartDate(e.target.value)}
                     />
@@ -687,7 +687,7 @@ const Calendar = () => {
                     <label className="block text-sm font-medium text-text-secondary mb-1">End Date</label>
                     <input 
                       type="date" 
-                      className="input w-full"
+                      className="glass-input w-full"
                       value={newEventEndDate}
                       onChange={(e) => setNewEventEndDate(e.target.value)}
                     />
@@ -714,7 +714,7 @@ const Calendar = () => {
                       <label className="block text-sm font-medium text-text-secondary mb-1">Start Time</label>
                       <input 
                         type="time" 
-                        className="input w-full" 
+                        className="glass-input w-full" 
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
                       />
@@ -723,7 +723,7 @@ const Calendar = () => {
                       <label className="block text-sm font-medium text-text-secondary mb-1">End Time</label>
                       <input 
                         type="time" 
-                        className="input w-full"
+                        className="glass-input w-full"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
                         placeholder="Optional"
@@ -735,7 +735,7 @@ const Calendar = () => {
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
                   <textarea 
-                    className="input w-full h-24" 
+                    className="glass-input w-full h-24" 
                     placeholder="Enter description"
                     value={newEventDescription}
                     onChange={(e) => setNewEventDescription(e.target.value)}
@@ -743,7 +743,7 @@ const Calendar = () => {
                 </div>
                 <div className="flex gap-2 pt-4">
                   <button 
-                    className="btn btn-primary flex-1"
+                    className="glass-btn glass-btn-primary flex-1"
                     onClick={handleCreateEvent}
                     disabled={isEventSubmitting}
                   >
@@ -754,7 +754,7 @@ const Calendar = () => {
                       </span>
                     ) : 'Create Event'}
                   </button>
-                  <button className="btn btn-secondary flex-1" onClick={() => setShowModal(false)} disabled={isEventSubmitting}>Cancel</button>
+                  <button className="glass-btn flex-1" onClick={() => setShowModal(false)} disabled={isEventSubmitting}>Cancel</button>
                 </div>
               </div>
             )}

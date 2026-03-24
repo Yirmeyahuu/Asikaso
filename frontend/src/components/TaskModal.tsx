@@ -8,126 +8,78 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
-  // Helper to convert Firestore timestamp or string to Date string (YYYY-MM-DD)
-  const parseDueDate = (dateValue: unknown): string => {
-    if (!dateValue) return '';
-    if (typeof dateValue === 'string') {
-      const d = new Date(dateValue);
-      return !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : '';
-    }
-    // Handle Firestore Timestamp
-    if (dateValue && typeof dateValue === 'object' && 'toDate' in dateValue) {
-      const d = (dateValue as { toDate: () => Date }).toDate();
-      return !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : '';
-    }
-    return '';
-  };
-
   const [title, setTitle] = useState(task?.title || '');
   const [description, setDescription] = useState(task?.description || '');
   const [status, setStatus] = useState(task?.status || 'todo');
   const [priority, setPriority] = useState(task?.priority || 'medium');
   const [dueDate, setDueDate] = useState(
-    task?.dueDate ? parseDueDate(task.dueDate) : ''
+    task?.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('[TaskModal] Submitting task...', { title, description, status, priority, dueDate });
-    
-    if (!title.trim()) {
-      setError('Title is required');
-      return;
-    }
-    
-    setIsSubmitting(true);
-    setError(null);
-    
-    try {
-      console.log('[TaskModal] Calling onSave with:', {
-        title: title.trim(),
-        description: description.trim(),
-        status,
-        priority,
-        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
-      });
-      
-      await onSave({
-        title: title.trim(),
-        description: description.trim(),
-        status: status as Task['status'],
-        priority: priority as Task['priority'],
-        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
-      });
-      
-      console.log('[TaskModal] onSave completed successfully');
-    } catch (err) {
-      console.error('[TaskModal] Error during save:', err);
-      setError(err instanceof Error ? err.message : 'Failed to save task');
-    } finally {
-      setIsSubmitting(false);
-    }
+    onSave({
+      title,
+      description,
+      status: status as Task['status'],
+      priority: priority as Task['priority'],
+      dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+    });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-      <div className="card w-full max-w-sm sm:max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-text-primary">
+    <div className="fixed inset-0 z-50 flex items-center justify-center glass-modal-overlay p-4">
+      <div className="glass-modal-content w-full max-w-md p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-text-primary">
             {task ? 'Edit Task' : 'New Task'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-bg-tertiary/50 rounded-full transition-colors"
           >
-            ✕
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 bg-error/10 border border-error/30 rounded-lg text-error text-sm">
-              {error}
-            </div>
-          )}
-
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="input w-full"
+              className="glass-input w-full"
               placeholder="Enter task title"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="input w-full h-24"
+              className="glass-input w-full h-24 resize-none"
               placeholder="Enter task description"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as Task['status'])}
-                className="input w-full"
+                className="glass-input w-full"
               >
                 <option value="todo">To Do</option>
                 <option value="in_progress">In Progress</option>
@@ -137,13 +89,13 @@ export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Priority
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Task['priority'])}
-                className="input w-full"
+                className="glass-input w-full"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -154,14 +106,14 @@ export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Due Date
             </label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="input w-full"
+              className="glass-input w-full"
             />
           </div>
 
@@ -169,22 +121,12 @@ export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-secondary"
-              disabled={isSubmitting}
+              className="glass-btn"
             >
               Cancel
             </button>
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  Saving...
-                </span>
-              ) : task ? 'Update' : 'Create'}
+            <button type="submit" className="glass-btn glass-btn-primary">
+              {task ? 'Update' : 'Create'}
             </button>
           </div>
         </form>

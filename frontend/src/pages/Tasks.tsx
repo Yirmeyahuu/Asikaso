@@ -20,7 +20,6 @@ import type { Task, TaskStatus } from '../types';
 import TaskCard from '../components/TaskCard';
 import KanbanColumn from '../components/KanbanColumn';
 import TaskModal from '../components/TaskModal';
-import { TasksPageSkeleton } from '../components/Skeleton';
 
 const COLUMNS: { id: TaskStatus; title: string }[] = [
   { id: 'todo', title: 'To Do' },
@@ -30,7 +29,6 @@ const COLUMNS: { id: TaskStatus; title: string }[] = [
 ];
 
 export default function Tasks() {
-  console.log('[Tasks] Component rendering');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -53,12 +51,11 @@ export default function Tasks() {
   }, []);
 
   const loadTasks = async () => {
-    console.log('[Tasks] Loading tasks...');
     try {
       const { tasks: loadedTasks } = await api.getTasks();
-      setTasks(loadedTasks || []);
+      setTasks(loadedTasks);
     } catch (error) {
-      console.error('[Tasks] Error loading tasks:', error);
+      console.error('Error loading tasks:', error);
     } finally {
       setIsLoading(false);
     }
@@ -85,12 +82,15 @@ export default function Tasks() {
     const activeTaskItem = tasks.find(t => t.id === active.id);
     if (!activeTaskItem) return;
 
+    // Find the over column
     const overColumn = COLUMNS.find(col => col.id === over.id);
     if (overColumn) {
+      // Dropped on a column
       if (activeTaskItem.status !== overColumn.id) {
         await updateTaskStatus(activeTaskItem.id, overColumn.id);
       }
     } else {
+      // Dropped on another task
       const overTask = tasks.find(t => t.id === over.id);
       if (overTask && activeTaskItem.status !== overTask.status) {
         await updateTaskStatus(activeTaskItem.id, overTask.status);
@@ -145,33 +145,40 @@ export default function Tasks() {
   };
 
   if (isLoading) {
-    return <TasksPageSkeleton />;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+    <div className="space-y-6">
+      {/* Header - iOS style */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-text-primary">Tasks</h1>
-          <p className="text-sm text-text-secondary hidden sm:block">Manage your tasks in a Kanban board</p>
+          <h1 className="page-title">Tasks</h1>
+          <p className="page-subtitle">Manage your tasks in a Kanban board</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="btn btn-primary text-sm"
+          className="btn btn-primary"
         >
-          + New Task
+          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          New Task
         </button>
       </div>
 
-      {/* Kanban Board */}
+      {/* Kanban Board - iOS style */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {COLUMNS.map(column => (
             <KanbanColumn
               key={column.id}

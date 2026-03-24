@@ -21,14 +21,27 @@ export default function KanbanColumn({ id, title, children }: KanbanColumnProps)
     return colors[status];
   };
 
+  const getStatusDotColor = (status: TaskStatus) => {
+    const colors = {
+      todo: 'bg-todo',
+      in_progress: 'bg-in-progress',
+      review: 'bg-review',
+      done: 'bg-done',
+    };
+    return colors[status];
+  };
+
   return (
     <div
       ref={setNodeRef}
-      className={`kanban-column p-4 ${isOver ? 'ring-2 ring-primary' : ''}`}
+      className={`kanban-column p-4 ${isOver ? 'ring-2 ring-primary ring-opacity-50' : ''}`}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className={`font-semibold ${getStatusColor(id)}`}>{title}</h3>
-        <span className="text-text-muted text-sm">
+        <div className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${getStatusDotColor(id)}`}></span>
+          <h3 className={`font-semibold text-[15px] ${getStatusColor(id)}`}>{title}</h3>
+        </div>
+        <span className="text-text-muted text-sm bg-bg-secondary px-2 py-1 rounded-lg">
           {/* Children count would go here */}
         </span>
       </div>

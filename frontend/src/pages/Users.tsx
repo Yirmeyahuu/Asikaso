@@ -133,8 +133,8 @@ function UserModal({ user, onSave, onClose }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-      <div className="card w-full max-w-md p-6 m-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center glass-modal-overlay">
+      <div className="glass-modal-content w-full max-w-md p-6 m-4">
         <h2 className="text-xl font-bold text-text-primary mb-4">Edit User</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -143,7 +143,7 @@ function UserModal({ user, onSave, onClose }: {
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="input w-full"
+              className="glass-input w-full"
             />
           </div>
           <div>
@@ -151,7 +151,7 @@ function UserModal({ user, onSave, onClose }: {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as User['role'])}
-              className="input w-full"
+              className="glass-input w-full"
             >
               <option value="employee">Employee</option>
               <option value="department_manager">Department Manager</option>
@@ -164,13 +164,13 @@ function UserModal({ user, onSave, onClose }: {
               type="text"
               value={departmentId}
               onChange={(e) => setDepartmentId(e.target.value)}
-              className="input w-full"
+              className="glass-input w-full"
               placeholder="Leave empty for no department"
             />
           </div>
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>
-            <button type="submit" className="btn btn-primary">Save</button>
+            <button type="button" onClick={onClose} className="glass-btn">Cancel</button>
+            <button type="submit" className="glass-btn glass-btn-primary">Save</button>
           </div>
         </form>
       </div>

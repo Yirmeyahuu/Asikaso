@@ -1,14 +1,38 @@
 // User types
+export type UserRole = 'admin' | 'department_manager' | 'employee' | 'organization_member';
+
 export interface User {
   id: string;
   email: string;
   displayName: string;
-  role: 'admin' | 'department_manager' | 'employee';
+  role: UserRole;
   departmentId?: string;
   photoURL?: string;
   isActive?: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+// Organization types
+export interface Organization {
+  id: string;
+  name: string;
+  description?: string;
+  adminUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Organization Member types
+export interface OrganizationMember {
+  id: string;
+  email: string;
+  userId: string;
+  displayName: string;
+  role: 'organization_member' | 'admin';
+  addedBy?: string;
+  createdAt: string;
+  isActive?: boolean;
 }
 
 // Department types

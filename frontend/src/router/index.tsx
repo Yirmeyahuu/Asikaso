@@ -11,7 +11,9 @@ import Dashboard from '../pages/Dashboard';
 import Tasks from '../pages/Tasks';
 import Calendar from '../pages/Calendar';
 import Departments from '../pages/Departments';
+import Organization from '../pages/Organization';
 import Users from '../pages/Users';
+import Profile from '../pages/Profile';
 import Error from '../pages/Error';
 
 // Route guard component - protects routes from unauthenticated access
@@ -95,12 +97,20 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: 'organization',
+        element: <Organization />,
+      },
+      {
         path: 'users',
         element: (
           <ProtectedRoute requiredRole={['admin']}>
             <Users />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
       },
     ],
   },

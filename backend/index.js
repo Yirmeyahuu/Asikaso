@@ -16,6 +16,7 @@ const taskRoutes = require('./routes/tasks');
 const subtaskRoutes = require('./routes/subtasks');
 const activityRoutes = require('./routes/activity');
 const eventsRoutes = require('./routes/events');
+const organizationRoutes = require('./routes/organization');
 
 // Initialize Express app
 const app = express();
@@ -87,6 +88,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/events', eventsRoutes);
+app.use('/api/organization', organizationRoutes);
 
 // 404 handler
 app.use((req, res) => {

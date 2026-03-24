@@ -1,4 +1,4 @@
-import type { User, Task, Department, TaskStats, Activity, CalendarEvent, DashboardData } from '../types';
+import type { User, Task, Department, TaskStats, Activity, CalendarEvent, DashboardData, Organization, OrganizationMember } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -219,6 +219,48 @@ class ApiService {
 
   async getDashboardData(): Promise<{ data: DashboardData }> {
     return this.request<{ data: DashboardData }>('/events/dashboard');
+  }
+
+  // Organization
+  async getOrganization(): Promise<{ organization?: Organization; exists: boolean }> {
+    return this.request<{ organization?: Organization; exists: boolean }>('/organization');
+  }
+
+  async createOrganization(name: string, description?: string): Promise<{ organization: Organization }> {
+    return this.request<{ organization: Organization }>('/organization', { method: 'POST', body: { name, description } });
+  }
+
+  async updateOrganization(name: string, description?: string): Promise<{ organization: Organization }> {
+    return this.request<{ organization: Organization }>('/organization', { method: 'PUT', body: { name, description } });
+  }
+
+  async checkIsAdmin(): Promise<{ isAdmin: boolean; hasOrganization: boolean }> {
+    return this.request<{ isAdmin: boolean; hasOrganization: boolean }>('/organization/check-admin');
+  }
+
+  // Organization Members
+  async getOrganizationMembers(): Promise<{ members: OrganizationMember[] }> {
+    return this.request<{ members: OrganizationMember[] }>('/organization/members');
+  }
+
+  async addOrganizationMember(email: string): Promise<{ member: OrganizationMember }> {
+    return this.request<{ member: OrganizationMember }>('/organization/members', { method: 'POST', body: { email } });
+  }
+
+  async removeOrganizationMember(id: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/organization/members/${id}`, { method: 'DELETE' });
+  }
+
+  async updateOrganizationMemberRole(id: string, role: string): Promise<{ member: OrganizationMember }> {
+    return this.request<{ member: OrganizationMember }>(`/organization/members/${id}`, { method: 'PUT', body: { role } });
+  }
+
+  async getOrganizationMemberCount(): Promise<{ count: number }> {
+    return this.request<{ count: number }>('/organization/members/count');
+  }
+
+  async checkUserExists(email: string): Promise<{ exists: boolean; user?: { uid: string; email: string; displayName: string } }> {
+    return this.request<{ exists: boolean; user?: { uid: string; email: string; displayName: string } }>(`/organization/check-user?email=${encodeURIComponent(email)}`);
   }
 }
 

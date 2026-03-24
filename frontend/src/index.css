@@ -2,45 +2,48 @@
 
 @import "tailwindcss";
 
-/* Light Theme - Soft neutral tones */
+/* iOS-Inspired Design System */
+
+/* Light Theme - Soft, clean iOS look */
 @theme {
-  --color-bg-primary: #f8f9fa;
+  --color-bg-primary: #f2f2f7;
   --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #e9ecef;
-  --color-text-primary: #212529;
-  --color-text-secondary: #6c757d;
-  --color-text-muted: #adb5bd;
-  --color-border: #dee2e6;
+  --color-bg-tertiary: #e5e5ea;
+  --color-text-primary: #000000;
+  --color-text-secondary: #3c3c43;
+  --color-text-muted: #8e8e93;
+  --color-border: #c6c6c8;
   
-  /* Brand colors - Blue primary, Green secondary, Yellow accent */
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #dbeafe;
-  --color-secondary: #10b981;
-  --color-accent: #f59e0b;
+  /* Brand colors - iOS Blue primary, softer tones */
+  --color-primary: #007aff;
+  --color-primary-hover: #0056b3;
+  --color-primary-light: #e5f2ff;
+  --color-secondary: #34c759;
+  --color-accent: #ff9500;
   
-  /* Status colors */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  /* Status colors - iOS style */
+  --color-success: #34c759;
+  --color-warning: #ff9500;
+  --color-error: #ff3b30;
+  --color-info: #007aff;
   
-  /* Task status colors */
-  --color-todo: #64748b;
-  --color-in-progress: #3b82f6;
-  --color-review: #f59e0b;
-  --color-done: #22c55e;
+  /* Task status colors - iOS style */
+  --color-todo: #8e8e93;
+  --color-in-progress: #007aff;
+  --color-review: #ff9500;
+  --color-done: #34c759;
   
-  /* Priority colors */
-  --color-priority-low: #94a3b8;
-  --color-priority-medium: #f59e0b;
-  --color-priority-high: #f97316;
-  --color-priority-urgent: #ef4444;
+  /* Priority colors - iOS style */
+  --color-priority-low: #8e8e93;
+  --color-priority-medium: #ff9500;
+  --color-priority-high: #ff3b30;
+  --color-priority-urgent: #af52de;
 }
 
 /* Base styles */
 * {
-  /* No global transitions - disabled for simplicity */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html {
@@ -52,144 +55,380 @@ body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   font-weight: 400;
+  font-size: 17px; /* iOS standard base size */
+  line-height: 1.4;
 }
 
 /* Headings - Bold */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-/* Dark Theme - Muted dark tones */
+/* Dark Theme - iOS dark mode */
 .dark {
-  --color-bg-primary: #131313;
-  --color-bg-secondary: #1e1e1e;
-  --color-bg-tertiary: #2d2d2d;
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-border: #334155;
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #1c1c1e;
+  --color-bg-tertiary: #2c2c2e;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ebebf5;
+  --color-text-muted: #636366;
+  --color-border: #38383a;
   
-  --color-primary-light: #1e3a5f;
+  --color-primary-light: #0a2540;
 }
 
-/* Scrollbar styling */
+/* Scrollbar - iOS style thin */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-tertiary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-secondary);
-  border-radius: 4px;
+  background: var(--color-text-muted);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: var(--color-text-secondary);
 }
 
-/* Card styles */
+/* ===========================
+   iOS-STYLE CARDS
+   Rounded with soft shadows
+   =========================== */
 .card {
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Skeleton loading animation */
-.skeleton {
-  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-  border-radius: 4px;
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Button styles */
+/* ===========================
+   iOS-STYLE BUTTONS
+   Liquid/rounded with smooth feel
+   =========================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  font-size: 0.8125rem;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.02em;
   cursor: pointer;
   border: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(180deg, #007aff 0%, #0056cc 100%);
   color: white;
+  box-shadow: 
+    0 4px 12px rgba(0, 122, 255, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
+  background: linear-gradient(180deg, #0080ff 0%, #0060cc 100%);
+  box-shadow: 
+    0 6px 16px rgba(0, 122, 255, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
   background-color: var(--color-bg-tertiary);
   color: var(--color-text-primary);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary:hover {
   background-color: var(--color-border);
 }
 
-/* Input styles */
+/* iOS-style small button */
+.btn-sm {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+/* iOS-style large button */
+.btn-lg {
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-size: 19px;
+}
+
+/* ===========================
+   iOS-STYLE INPUT FIELDS
+   Clean, rounded, subtle
+   =========================== */
 .input {
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-tertiary);
+  border: none;
   color: var(--color-text-primary);
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 14px 16px;
+  border-radius: 12px;
   outline: none;
   font-family: 'Geist', sans-serif;
   font-weight: 400;
-  font-size: 0.875rem;
+  font-size: 17px;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background-color: var(--color-bg-secondary);
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
 .input::placeholder {
   color: var(--color-text-muted);
 }
 
-/* Sidebar styles */
-.sidebar {
-  background-color: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border);
+/* iOS-style search input */
+.input-search {
+  background-color: var(--color-bg-tertiary);
+  border-radius: 10px;
+  padding-left: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 14px center;
 }
 
-/* Nav links */
+/* ===========================
+   iOS-STYLE SIDEBAR
+   Clean, minimal, with blur
+   =========================== */
+.sidebar {
+  background-color: var(--color-bg-secondary);
+  border-right: none;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===========================
+   iOS-STYLE BOTTOM NAV BAR
+   Fixed bottom navigation
+   =========================== */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 14px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: 11px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 2px;
+  min-width: 64px;
+  position: relative;
+  transform: translateY(0);
+}
+
+.bottom-nav-item:hover {
+  color: var(--color-text-secondary);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item:hover::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  animation: popUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes popUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.bottom-nav-item.active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--color-primary);
+  animation: arrowPop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile Responsive - Smaller bottom nav */
+@media (max-width: 480px) {
+  .glass-bottom-nav {
+    max-width: 100%;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+  }
+  
+  .bottom-nav-item {
+    padding: 6px 8px;
+    min-width: 44px;
+    gap: 1px;
+  }
+  
+  .bottom-nav-item svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .bottom-nav-item span {
+    font-size: 8px !important;
+  }
+  
+  .bottom-nav-item.active::before {
+    top: -4px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--color-primary);
+  }
+  
+  .bottom-nav-item:hover::after {
+    top: -6px;
+    width: 3px;
+    height: 3px;
+  }
+}
+
+@keyframes arrowPop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.bottom-nav-item.active svg {
+  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.4));
+}
+
+.dark .bottom-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Liquid Glass Bottom Navigation Bar */
+.glass-bottom-nav {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 -4px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  max-width: 480px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dark .glass-bottom-nav {
+  background: rgba(28, 28, 30, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 -4px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Safe area padding for mobile devices with home indicator */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@supports (padding-bottom: constant(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: constant(safe-area-inset-bottom);
+  }
+}
+
+/* ===========================
+   iOS-STYLE NAV LINKS
+   Rounded, smooth transitions
+   =========================== */
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
   color: var(--color-text-secondary);
-  font-weight: 400;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 2px 8px;
 }
 
 .nav-link:hover {
@@ -202,106 +441,382 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-primary);
 }
 
-/* Modal overlay */
-.modal-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+/* ===========================
+   LIQUID GLASS / GLASSMORPHISM
+   Modern frosted glass effect
+   =========================== */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Kanban column */
+/* Dark mode glass */
+.dark .glass {
+  background: rgba(28, 28, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .glass-card {
+  background: rgba(28, 28, 30, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.dark .glass-card:hover {
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glass modal overlay */
+.glass-modal-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: glassModalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes glassModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Glass modal content */
+.glass-modal-content {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  box-shadow: 
+    0 24px 64px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: glassModalSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .glass-modal-content {
+  background: rgba(28, 28, 30, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 24px 64px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@keyframes glassModalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Glass input */
+.glass-input {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--color-text-primary);
+  padding: 14px 16px;
+  border-radius: 14px;
+  outline: none;
+  font-family: 'Geist', sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  transition: all 0.25s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-input {
+  background: rgba(44, 44, 46, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(0, 122, 255, 0.5);
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.05),
+    0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+.dark .glass-input:focus {
+  background: rgba(44, 44, 46, 0.7);
+}
+
+.glass-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Glass button */
+.glass-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-text-primary);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.dark .glass-btn {
+  background: rgba(44, 44, 46, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.dark .glass-btn:hover {
+  background: rgba(56, 56, 58, 0.7);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.glass-btn:active {
+  transform: scale(0.97);
+}
+
+/* Glass button primary */
+.glass-btn-primary {
+  background: linear-gradient(180deg, rgba(0, 122, 255, 0.85) 0%, rgba(0, 86, 204, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(0, 122, 255, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-btn-primary:hover {
+  background: linear-gradient(180deg, rgba(0, 128, 255, 0.9) 0%, rgba(0, 96, 204, 0.95) 100%);
+  box-shadow: 
+    0 6px 20px rgba(0, 122, 255, 0.45),
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* ===========================
+   iOS-STYLE MODAL
+   Smooth, blurred backdrop
+   =========================== */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background-color: var(--color-bg-secondary);
+  border-radius: 20px;
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.2),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  animation: modalSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===========================
+   iOS-STYLE KANBAN COLUMN
+   Rounded, soft appearance
+   =========================== */
 .kanban-column {
   background-color: var(--color-bg-tertiary);
-  border-radius: 0.75rem;
+  border-radius: 16px;
   min-height: 500px;
+  transition: all 0.2s ease;
 }
 
-/* Task card */
+.kanban-column:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ===========================
+   iOS-STYLE TASK CARD
+   Rounded, floating, subtle
+   =========================== */
 .task-card {
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
   cursor: grab;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .task-card:hover {
-  border-color: var(--color-primary);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.task-card:active {
+  cursor: grabbing;
 }
 
 .task-card.dragging {
-  opacity: 0.5;
+  opacity: 0.8;
+  transform: scale(1.02) rotate(2deg);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Page title */
+/* ===========================
+   iOS-STYLE PAGE TITLE
+   =========================== */
 .page-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 34px;
+  font-weight: 700;
   color: var(--color-text-primary);
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
+  letter-spacing: -0.03em;
 }
 
 @media (min-width: 640px) {
   .page-title {
-    font-size: 1.75rem;
+    font-size: 40px;
   }
 }
 
 .page-subtitle {
-  font-size: 0.875rem;
+  font-size: 17px;
   color: var(--color-text-secondary);
   font-weight: 400;
+  margin-top: 4px;
 }
 
-/* Stats card */
+/* ===========================
+   iOS-STYLE STATS CARD
+   Floating, rounded, minimal
+   =========================== */
 .stat-card {
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  transition: all 150ms;
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .stat-value {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 700;
   color: var(--color-text-primary);
+  letter-spacing: -0.02em;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 13px;
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-/* Priority badges */
-.badge-low {
-  background-color: var(--color-priority-low);
-  color: white;
-}
-
-.badge-medium {
-  background-color: var(--color-priority-medium);
-  color: white;
-}
-
-.badge-high {
-  background-color: var(--color-priority-high);
-  color: white;
-}
-
+/* ===========================
+   iOS-STYLE BADGES
+   Rounded pills
+   =========================== */
+.badge-low,
+.badge-medium,
+.badge-high,
 .badge-urgent {
-  background-color: var(--color-priority-urgent);
-  color: white;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* Status badges */
+/* Status badges - iOS style */
 .status-todo {
   color: var(--color-todo);
 }
@@ -318,47 +833,91 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-done);
 }
 
-/* Table styles */
+/* Status badge pills */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge-todo {
+  background-color: rgba(142, 142, 147, 0.15);
+  color: var(--color-todo);
+}
+
+.status-badge-in-progress {
+  background-color: rgba(0, 122, 255, 0.15);
+  color: var(--color-in-progress);
+}
+
+.status-badge-review {
+  background-color: rgba(255, 149, 0, 0.15);
+  color: var(--color-review);
+}
+
+.status-badge-done {
+  background-color: rgba(52, 199, 89, 0.15);
+  color: var(--color-done);
+}
+
+/* ===========================
+   iOS-STYLE TABLES
+   Clean, minimal, rounded
+   =========================== */
 .table-container {
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border: none;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .table th {
-  background-color: var(--color-bg-tertiary);
-  padding: 1rem;
+  background-color: transparent;
+  padding: 16px;
   text-align: left;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table td {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 15px;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
 }
 
 .table tr:hover td {
-  background-color: var(--color-bg-tertiary);
+  background-color: rgba(0, 122, 255, 0.03);
 }
 
-/* Loading spinner */
+/* ===========================
+   iOS-STYLE SPINNER
+   Thin, elegant
+   =========================== */
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--color-border);
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid var(--color-bg-tertiary);
   border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -367,59 +926,156 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Avatar */
+/* ===========================
+   iOS-STYLE AVATAR
+   Perfect circle, clean
+   =========================== */
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #5856d6 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
-/* Dropdown menu */
+/* ===========================
+   iOS-STYLE DROPDOWN
+   Rounded, blurred, smooth
+   =========================== */
 .dropdown-menu {
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 14px;
+  box-shadow: 
+    0 12px 36px rgba(0, 0, 0, 0.15),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .dropdown-item {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 150ms;
+  transition: background-color 0.15s ease;
 }
 
 .dropdown-item:hover {
-  background-color: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
+  background-color: rgba(0, 122, 255, 0.08);
 }
 
-/* Empty state */
+.dropdown-item:first-child {
+  border-radius: 14px 14px 0 0;
+}
+
+.dropdown-item:last-child {
+  border-radius: 0 0 14px 14px;
+}
+
+/* ===========================
+   iOS-STYLE EMPTY STATE
+   Centered, clean icon
+   =========================== */
 .empty-state {
   text-align: center;
-  padding: 3rem;
+  padding: 48px 24px;
   color: var(--color-text-muted);
 }
 
 .empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
 }
 
-/* Animations */
+/* ===========================
+   iOS-STYLE CALENDAR
+   Rounded cells, clean grid
+   =========================== */
+.calendar-cell {
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+
+.calendar-cell:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.calendar-cell-today {
+  background-color: var(--color-primary-light);
+}
+
+.calendar-cell-today .calendar-day-number {
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Calendar header */
+.calendar-header {
+  background-color: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+
+/* ===========================
+   iOS-STYLE SKELETON
+   Smooth shimmer effect
+   =========================== */
+.skeleton {
+  background: linear-gradient(
+    90deg, 
+    var(--color-bg-tertiary) 0%, 
+    var(--color-bg-secondary) 50%, 
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===========================
+   iOS-STYLE ANIMATIONS
+   Smooth, natural feel
+   =========================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -428,5 +1084,230 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* iOS-style press effect */
+.press-effect {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.press-effect:active {
+  transform: scale(0.96);
+}
+
+/* ===========================
+   iOS-STYLE FOCUS STATES
+   Subtle, not harsh
+   =========================== */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+}
+
+/* ===========================
+   iOS-STYLE TOGGLE
+   Clean on/off switch
+   =========================== */
+.toggle {
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  background-color: var(--color-bg-tertiary);
+  padding: 2px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-active {
+  background-color: var(--color-primary);
+}
+
+.toggle-knob {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-active .toggle-knob {
+  transform: translateX(20px);
+}
+
+/* ===========================
+   iOS-STYLE PROGRESS BAR
+   Rounded, smooth
+   =========================== */
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: var(--color-bg-tertiary);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #5856d6 100%);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===========================
+   iOS-STYLE DIVIDER
+   Subtle separator
+   =========================== */
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 16px 0;
+}
+
+/* ===========================
+   iOS-STYLE TOOLTIP
+   Clean, minimal
+   =========================== */
+.tooltip {
+  background-color: #1c1c1e;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===========================
+   CUSTOM CURSORS
+   Using .cur files from assets
+   =========================== */
+/* Pointer cursor - default for clickable elements */
+.cursor-pointer,
+input,
+textarea,
+select {
+  cursor: url('/src/assets/cursor/Pointer.cur'), pointer;
+}
+
+/* Hand cursor - for links and buttons */
+.cursor-hand,
+button,
+.btn,
+.glass-btn,
+.glass-btn-primary,
+a,
+.nav-link {
+  cursor: pointer;
+}
+
+/* Move cursor - for draggable elements */
+.cursor-move,
+.task-card[draggable="true"],
+.sortable-handle,
+.drag-handle {
+  cursor: grab;
+}
+
+/* Resize cursors */
+.cursor-vertical,
+.resize-vertical {
+  cursor: ns-resize;
+}
+
+.cursor-horizontal,
+.resize-horizontal {
+  cursor: ew-resize;
+}
+
+.cursor-diagonal-left,
+.resize-diagonal-tlbr {
+  cursor: nwse-resize;
+}
+
+.cursor-diagonal-right,
+.resize-diagonal-trbl {
+  cursor: nesw-resize;
+}
+
+/* Cross cursor for precision */
+.cursor-cross {
+  cursor: crosshair;
+}
+
+/* Text cursor for text selection */
+.cursor-text {
+  cursor: text;
+}
+
+/* Wait cursor for loading states */
+.cursor-wait {
+  cursor: wait;
+}
+
+/* Help cursor for question marks */
+.cursor-help {
+  cursor: help;
+}
+
+/* Default body cursor - uses Pointer.cur */
+body {
+  cursor: url('/src/assets/cursor/Pointer.cur'), default;
+}
+
+/* ===========================
+   CUSTOM CURSOR FILES
+   Using .cur files from assets/cursor
+   =========================== */
+/* Pointer cursor for links and buttons - uses Hand.cur */
+.cursor-hand,
+button,
+.btn,
+.glass-btn,
+.glass-btn-primary,
+a,
+.nav-link {
+  cursor: url('/src/assets/cursor/Hand.cur'), pointer;
+}
+
+/* Move cursor for draggable elements - uses move.cur */
+.cursor-move,
+.task-card[draggable="true"],
+.sortable-handle,
+.drag-handle {
+  cursor: url('/src/assets/cursor/move.cur'), grab;
+}
+
+/* Vertical resize cursor - uses Vertical.cur */
+.cursor-vertical,
+.resize-vertical {
+  cursor: url('/src/assets/cursor/Vertical.cur'), ns-resize;
+}
+
+/* Horizontal resize cursor - uses Horizontal.cur */
+.cursor-horizontal,
+.resize-horizontal {
+  cursor: url('/src/assets/cursor/Horizontal.cur'), ew-resize;
+}
+
+/* Diagonal resize cursors */
+.cursor-diagonal-left,
+.resize-diagonal-tlbr {
+  cursor: url('/src/assets/cursor/Diagonal Left.cur'), nwse-resize;
+}
+
+.cursor-diagonal-right,
+.resize-diagonal-trbl {
+  cursor: url('/src/assets/cursor/Diagonal Right.cur'), nesw-resize;
 }

@@ -147,35 +147,38 @@ async function getDashboardData(userId, departmentId) {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   
-  // Get today's events
+  // Get today's events - simple query, filter in code
   const todayEventsSnapshot = await db.collection(EVENTS_COLLECTION)
     .where('startDate', '>=', today.toISOString())
     .where('startDate', '<', tomorrow.toISOString())
-    .where('status', '!=', 'archived')
     .get();
   
-  const todayEvents = todayEventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const todayEvents = todayEventsSnapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(event => event.status !== 'archived');
   
-  // Get upcoming events (next 7 days)
+  // Get upcoming events (next 7 days) - simple query, filter in code
   const futureDate = new Date(today);
   futureDate.setDate(futureDate.getDate() + 7);
   
   const upcomingSnapshot = await db.collection(EVENTS_COLLECTION)
     .where('startDate', '>=', today.toISOString())
     .where('startDate', '<=', futureDate.toISOString())
-    .where('status', '!=', 'archived')
     .get();
   
-  const upcomingEvents = upcomingSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const upcomingEvents = upcomingSnapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(event => event.status !== 'archived');
   
-  // Get tasks due soon
+  // Get tasks due soon - simple query, filter in code
   const tasksSnapshot = await db.collection('tasks')
     .where('dueDate', '>=', today.toISOString())
     .where('dueDate', '<=', futureDate.toISOString())
-    .where('status', '!=', 'completed')
     .get();
   
-  const dueSoonTasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const dueSoonTasks = tasksSnapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(task => task.status !== 'completed');
   
   return {
     todayEvents,
