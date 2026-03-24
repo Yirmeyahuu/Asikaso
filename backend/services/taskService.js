@@ -8,6 +8,22 @@ const { admin } = require('../firebaseAdmin');
 
 const TASKS_COLLECTION = 'tasks';
 
+// Helper to convert Firestore Timestamp fields to ISO strings
+const convertTimestamps = (data) => {
+  if (!data) return data;
+  const result = { ...data };
+  if (result.dueDate && typeof result.dueDate.toDate === 'function') {
+    result.dueDate = result.dueDate.toDate().toISOString();
+  }
+  if (result.createdAt && typeof result.createdAt.toDate === 'function') {
+    result.createdAt = result.createdAt.toDate().toISOString();
+  }
+  if (result.updatedAt && typeof result.updatedAt.toDate === 'function') {
+    result.updatedAt = result.updatedAt.toDate().toISOString();
+  }
+  return result;
+};
+
 /**
  * Get all tasks
  */
@@ -16,10 +32,7 @@ const getAllTasks = async () => {
     .orderBy('createdAt', 'desc')
     .get();
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => convertTimestamps({ id: doc.id, ...doc.data() }));
 };
 
 /**
@@ -30,7 +43,7 @@ const getTaskById = async (taskId) => {
   if (!doc.exists) {
     return null;
   }
-  return { id: doc.id, ...doc.data() };
+  return convertTimestamps({ id: doc.id, ...doc.data() });
 };
 
 /**
@@ -42,10 +55,7 @@ const getTasksByDepartment = async (departmentId) => {
     .orderBy('createdAt', 'desc')
     .get();
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => convertTimestamps({ id: doc.id, ...doc.data() }));
 };
 
 /**
@@ -57,10 +67,7 @@ const getTasksByAssignee = async (assigneeId) => {
     .orderBy('createdAt', 'desc')
     .get();
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => convertTimestamps({ id: doc.id, ...doc.data() }));
 };
 
 /**
@@ -72,10 +79,7 @@ const getTasksByStatus = async (status) => {
     .orderBy('createdAt', 'desc')
     .get();
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => convertTimestamps({ id: doc.id, ...doc.data() }));
 };
 
 /**
@@ -161,10 +165,7 @@ const getDashboardTasks = async (userId, role, departmentId) => {
     .limit(20)
     .get();
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => convertTimestamps({ id: doc.id, ...doc.data() }));
 };
 
 /**

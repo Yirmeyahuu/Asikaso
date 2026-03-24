@@ -34,6 +34,24 @@ export default function TaskCard({ task, isDragging = false, onEdit, onDelete }:
     return colors[priority as keyof typeof colors] || 'bg-gray-500';
   };
 
+  // Helper to convert Firestore timestamp or string to Date
+  const parseDate = (dateValue: unknown): Date | null => {
+    if (!dateValue) return null;
+    if (dateValue instanceof Date) return dateValue;
+    if (typeof dateValue === 'string') return new Date(dateValue);
+    // Handle Firestore Timestamp (has toDate method)
+    if (dateValue && typeof dateValue === 'object' && 'toDate' in dateValue) {
+      return (dateValue as { toDate: () => Date }).toDate();
+    }
+    return null;
+  };
+
+  const formatDueDate = (dueDate: unknown): string => {
+    const parsed = parseDate(dueDate);
+    if (!parsed || isNaN(parsed.getTime())) return 'No date';
+    return parsed.toLocaleDateString();
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -76,7 +94,7 @@ export default function TaskCard({ task, isDragging = false, onEdit, onDelete }:
       
       <div className="flex items-center justify-between text-xs text-text-muted">
         {task.dueDate && (
-          <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+          <span>Due: {formatDueDate(task.dueDate)}</span>
         )}
         <span className="capitalize">{task.priority}</span>
       </div>

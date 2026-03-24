@@ -3,12 +3,13 @@ const eventsService = require('../services/eventsService');
 // Create a new event
 exports.createEvent = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const eventData = req.body;
+    
+    // Validate required fields
+    if (!eventData.title || !eventData.startDate) {
+      return res.status(400).json({ error: 'Title and start date are required' });
+    }
+    
     const event = await eventsService.createEvent(eventData);
     
     res.status(201).json(event);
@@ -44,7 +45,7 @@ exports.getAllEvents = async (req, res, next) => {
     };
     
     const events = await eventsService.getAllEvents(filters);
-    res.json(events);
+    res.json({ events });  // Return as object with events key
   } catch (error) {
     next(error);
   }
@@ -60,7 +61,7 @@ exports.getEventsByDateRange = async (req, res, next) => {
     }
     
     const events = await eventsService.getEventsByDateRange(startDate, endDate);
-    res.json(events);
+    res.json({ events });  // Return as object with events key
   } catch (error) {
     next(error);
   }
@@ -70,7 +71,7 @@ exports.getEventsByDateRange = async (req, res, next) => {
 exports.getTodayEvents = async (req, res, next) => {
   try {
     const events = await eventsService.getTodayEvents();
-    res.json(events);
+    res.json({ events });
   } catch (error) {
     next(error);
   }
@@ -81,7 +82,7 @@ exports.getUpcomingEvents = async (req, res, next) => {
   try {
     const days = parseInt(req.query.days) || 3;
     const events = await eventsService.getUpcomingEvents(days);
-    res.json(events);
+    res.json({ events });
   } catch (error) {
     next(error);
   }

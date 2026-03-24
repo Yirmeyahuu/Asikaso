@@ -8,16 +8,16 @@ const { authorize } = require('../middleware/rbac');
 router.use(authenticate);
 
 // CRUD routes
-router.post('/', authorize('admin', 'manager'), eventsController.createEvent);
+router.post('/', eventsController.createEvent);
 router.get('/', eventsController.getAllEvents);
 router.get('/today', eventsController.getTodayEvents);
 router.get('/upcoming', eventsController.getUpcomingEvents);
 router.get('/range', eventsController.getEventsByDateRange);
 router.get('/department/:departmentId', eventsController.getEventsByDepartment);
 router.get('/:eventId', eventsController.getEventById);
-router.put('/:eventId', authorize('admin', 'manager'), eventsController.updateEvent);
+router.put('/:eventId', authorize('admin', 'manager', 'employee'), eventsController.updateEvent);
 router.patch('/:eventId/complete', eventsController.markEventCompleted);
 router.patch('/:eventId/archive', authorize('admin', 'manager'), eventsController.archiveEvent);
-router.delete('/:eventId', authorize('admin'), eventsController.deleteEvent);
+router.delete('/:eventId', authorize('admin', 'manager'), eventsController.deleteEvent);
 
 module.exports = router;

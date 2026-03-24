@@ -17,6 +17,11 @@ const Calendar = () => {
   const [newEventStartDate, setNewEventStartDate] = useState('');
   const [newEventEndDate, setNewEventEndDate] = useState('');
   const [newEventDescription, setNewEventDescription] = useState('');
+  const [eventError, setEventError] = useState<string | null>(null);
+  const [isEventSubmitting, setIsEventSubmitting] = useState(false);
+  const [isWholeDay, setIsWholeDay] = useState(false);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -26,21 +31,33 @@ const Calendar = () => {
     console.log('[Calendar] Fetching data...');
     try {
       setLoading(true);
+      
+      // Fetch all events without date filtering first (for debugging)
+      // Then we'll filter on frontend
       const startDate = getStartDate();
       const endDate = getEndDate();
+      console.log('[Calendar] Querying date range:', { startDate, endDate });
       
       // Fetch both events and tasks
       const [eventsRes, tasksRes] = await Promise.all([
-        api.getEventsByDateRange(startDate, endDate),
+        api.getEvents(), // Get all events
         api.getTasks()
       ]);
       
       console.log('[Calendar] Events response:', eventsRes);
+      console.log('[Calendar] Events array:', eventsRes?.events);
       console.log('[Calendar] Tasks response:', tasksRes);
+      console.log('[Calendar] Start date:', startDate);
+      console.log('[Calendar] End date:', endDate);
       
-      // Filter tasks that have due dates
+      // Filter tasks that have due dates - handle Firestore Timestamps
       const tasksWithDates = (tasksRes?.tasks || []).filter(
-        (task: Task) => task.dueDate
+        (task: Task) => {
+          // Handle Firestore Timestamp or string
+          if (!task.dueDate) return false;
+          const parsed = parseDate(task.dueDate);
+          return parsed !== null && !isNaN(parsed.getTime());
+        }
       );
       
       setEvents(eventsRes?.events || []);
@@ -118,45 +135,132 @@ const Calendar = () => {
 
   const getEventsForDay = (date: Date) => {
     if (!events || !Array.isArray(events)) return [];
-    const dateStr = date.toISOString().split('T')[0];
-    return events.filter(event => {
-      const eventDate = new Date(event.startDate).toISOString().split('T')[0];
-      return eventDate === dateStr;
+    // Use local date string to avoid timezone issues
+    const dateStr = date.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
+    console.log('[Calendar] getEventsForDay:', dateStr, 'Total events:', events.length);
+    
+    const filtered = events.filter(event => {
+      if (!event.startDate) return false;
+      const eventDate = new Date(event.startDate).toLocaleDateString('en-CA');
+      const matches = eventDate === dateStr;
+      if (matches) {
+        console.log('[Calendar] Event matches:', event.title, event.startDate, '->', eventDate);
+      }
+      return matches;
     });
+    console.log('[Calendar] Filtered events for', dateStr, ':', filtered.length);
+    return filtered;
+  };
+
+  // Helper to convert Firestore timestamp or string to Date
+  const parseDate = (dateValue: unknown): Date | null => {
+    if (!dateValue) return null;
+    if (dateValue instanceof Date) return dateValue;
+    if (typeof dateValue === 'string') return new Date(dateValue);
+    // Handle Firestore Timestamp (has toDate method)
+    if (dateValue && typeof dateValue === 'object' && 'toDate' in dateValue) {
+      return (dateValue as { toDate: () => Date }).toDate();
+    }
+    return null;
   };
 
   const getTasksForDay = (date: Date) => {
     if (!tasksWithDueDates || !Array.isArray(tasksWithDueDates)) return [];
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toLocaleDateString('en-CA');
     return tasksWithDueDates.filter(task => {
-      const taskDate = new Date(task.dueDate!).toISOString().split('T')[0];
+      const parsedDate = parseDate(task.dueDate);
+      if (!parsedDate) return false;
+      const taskDate = parsedDate.toLocaleDateString('en-CA');
       return taskDate === dateStr;
     });
   };
 
   const handleCreateEvent = async () => {
-    if (!newEventTitle || !newEventStartDate) return;
+    console.log('[Calendar] Creating event with:', { newEventTitle, newEventType, newEventStartDate, newEventEndDate, newEventDescription, isWholeDay, startTime, endTime });
+    
+    // Check title
+    if (!newEventTitle.trim()) {
+      setEventError('Title is required');
+      return;
+    }
+    
+    // Check date (not datetime)
+    if (!newEventStartDate) {
+      setEventError('Start date is required');
+      return;
+    }
+    
+    // Build the full datetime
+    let startDateTime: string;
+    let endDateTime: string;
+    
+    if (isWholeDay) {
+      // Whole day event - just use the date
+      startDateTime = new Date(newEventStartDate).toISOString();
+      // End date defaults to same day for whole day
+      const endDate = newEventEndDate || newEventStartDate;
+      endDateTime = new Date(endDate).toISOString();
+    } else {
+      // Specific time event
+      if (!startTime) {
+        setEventError('Start time is required when not whole day');
+        return;
+      }
+      
+      const startDateTimeObj = new Date(newEventStartDate);
+      startDateTimeObj.setHours(parseInt(startTime.split(':')[0]), parseInt(startTime.split(':')[1]), 0, 0);
+      startDateTime = startDateTimeObj.toISOString();
+      
+      if (endTime) {
+        const endDateTimeObj = newEventEndDate ? new Date(newEventEndDate) : new Date(newEventStartDate);
+        endDateTimeObj.setHours(parseInt(endTime.split(':')[0]), parseInt(endTime.split(':')[1]), 0, 0);
+        endDateTime = endDateTimeObj.toISOString();
+      } else {
+        // Default end time = start time + 1 hour
+        const defaultEnd = new Date(startDateTimeObj);
+        defaultEnd.setHours(defaultEnd.getHours() + 1);
+        endDateTime = defaultEnd.toISOString();
+      }
+    }
+    
+    console.log('[Calendar] Final startDateTime:', startDateTime, 'endDateTime:', endDateTime);
+    
+    setIsEventSubmitting(true);
+    setEventError(null);
+    
     try {
+      console.log('[Calendar] Calling api.createEvent...');
       const eventData = {
         title: newEventTitle,
         type: newEventType,
-        startDate: new Date(newEventStartDate).toISOString(),
-        endDate: newEventEndDate ? new Date(newEventEndDate).toISOString() : new Date(newEventStartDate).toISOString(),
+        startDate: startDateTime,
+        endDate: endDateTime,
         description: newEventDescription,
+        isWholeDay,
         status: 'pending' as const
       };
-      await api.createEvent(eventData);
+      console.log('[Calendar] Event data:', eventData);
+      
+      const response = await api.createEvent(eventData);
+      console.log('[Calendar] API response:', response);
+      
       // Reset form and close modal
       setNewEventTitle('');
       setNewEventType('event');
       setNewEventStartDate('');
       setNewEventEndDate('');
       setNewEventDescription('');
+      setIsWholeDay(false);
+      setStartTime('');
+      setEndTime('');
       setShowModal(false);
       // Refresh events
       fetchData();
     } catch (error) {
       console.error('[Calendar] Error creating event:', error);
+      setEventError(error instanceof Error ? error.message : 'Failed to create event');
+    } finally {
+      setIsEventSubmitting(false);
     }
   };
 
@@ -301,7 +405,9 @@ const Calendar = () => {
             </div>
             {days.map((day, dayIndex) => {
               const dayEvents = getEventsForDay(day).filter(event => {
-                const eventHour = new Date(event.startDate).getHours();
+                const eventDate = new Date(event.startDate);
+                // Use local hours (toLocaleString gets local time)
+                const eventHour = parseInt(eventDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit' }));
                 return eventHour === hour;
               });
               return (
@@ -348,7 +454,9 @@ const Calendar = () => {
         <div className="space-y-1">
           {hours.map(hour => {
             const hourEvents = dayEvents.filter(event => {
-              const eventHour = new Date(event.startDate).getHours();
+              const eventDate = new Date(event.startDate);
+              // Use local hours
+              const eventHour = parseInt(eventDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit' }));
               return eventHour === hour;
             });
             return (
@@ -537,6 +645,12 @@ const Calendar = () => {
               </div>
             ) : (
               <div className="space-y-4">
+                {eventError && (
+                  <div className="p-3 bg-error/10 border border-error/30 rounded-lg text-error text-sm">
+                    {eventError}
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">Event Title</label>
                   <input 
@@ -559,11 +673,11 @@ const Calendar = () => {
                     <option value="event">Event</option>
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-text-secondary mb-1">Start Date</label>
                     <input 
-                      type="datetime-local" 
+                      type="date" 
                       className="input w-full" 
                       value={newEventStartDate}
                       onChange={(e) => setNewEventStartDate(e.target.value)}
@@ -572,13 +686,52 @@ const Calendar = () => {
                   <div>
                     <label className="block text-sm font-medium text-text-secondary mb-1">End Date</label>
                     <input 
-                      type="datetime-local" 
+                      type="date" 
                       className="input w-full"
                       value={newEventEndDate}
                       onChange={(e) => setNewEventEndDate(e.target.value)}
                     />
                   </div>
                 </div>
+
+                {/* Whole Day Toggle */}
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isWholeDay}
+                      onChange={(e) => setIsWholeDay(e.target.checked)}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-text-secondary">All Day Event</span>
+                  </label>
+                </div>
+
+                {/* Time Fields - only show when not whole day */}
+                {!isWholeDay && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">Start Time</label>
+                      <input 
+                        type="time" 
+                        className="input w-full" 
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">End Time</label>
+                      <input 
+                        type="time" 
+                        className="input w-full"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                        placeholder="Optional"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
                   <textarea 
@@ -592,8 +745,16 @@ const Calendar = () => {
                   <button 
                     className="btn btn-primary flex-1"
                     onClick={handleCreateEvent}
-                  >Create Event</button>
-                  <button className="btn btn-secondary flex-1" onClick={() => setShowModal(false)}>Cancel</button>
+                    disabled={isEventSubmitting}
+                  >
+                    {isEventSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                        Creating...
+                      </span>
+                    ) : 'Create Event'}
+                  </button>
+                  <button className="btn btn-secondary flex-1" onClick={() => setShowModal(false)} disabled={isEventSubmitting}>Cancel</button>
                 </div>
               </div>
             )}

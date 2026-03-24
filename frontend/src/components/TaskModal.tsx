@@ -8,23 +8,67 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
+  // Helper to convert Firestore timestamp or string to Date string (YYYY-MM-DD)
+  const parseDueDate = (dateValue: unknown): string => {
+    if (!dateValue) return '';
+    if (typeof dateValue === 'string') {
+      const d = new Date(dateValue);
+      return !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : '';
+    }
+    // Handle Firestore Timestamp
+    if (dateValue && typeof dateValue === 'object' && 'toDate' in dateValue) {
+      const d = (dateValue as { toDate: () => Date }).toDate();
+      return !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : '';
+    }
+    return '';
+  };
+
   const [title, setTitle] = useState(task?.title || '');
   const [description, setDescription] = useState(task?.description || '');
   const [status, setStatus] = useState(task?.status || 'todo');
   const [priority, setPriority] = useState(task?.priority || 'medium');
   const [dueDate, setDueDate] = useState(
-    task?.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''
+    task?.dueDate ? parseDueDate(task.dueDate) : ''
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    onSave({
-      title,
-      description,
-      status: status as Task['status'],
-      priority: priority as Task['priority'],
-      dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
-    });
+    console.log('[TaskModal] Submitting task...', { title, description, status, priority, dueDate });
+    
+    if (!title.trim()) {
+      setError('Title is required');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      console.log('[TaskModal] Calling onSave with:', {
+        title: title.trim(),
+        description: description.trim(),
+        status,
+        priority,
+        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+      });
+      
+      await onSave({
+        title: title.trim(),
+        description: description.trim(),
+        status: status as Task['status'],
+        priority: priority as Task['priority'],
+        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+      });
+      
+      console.log('[TaskModal] onSave completed successfully');
+    } catch (err) {
+      console.error('[TaskModal] Error during save:', err);
+      setError(err instanceof Error ? err.message : 'Failed to save task');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -43,6 +87,12 @@ export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 bg-error/10 border border-error/30 rounded-lg text-error text-sm">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">
               Title
@@ -120,11 +170,21 @@ export default function TaskModal({ task, onSave, onClose }: TaskModalProps) {
               type="button"
               onClick={onClose}
               className="btn btn-secondary"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary">
-              {task ? 'Update' : 'Create'}
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  Saving...
+                </span>
+              ) : task ? 'Update' : 'Create'}
             </button>
           </div>
         </form>
