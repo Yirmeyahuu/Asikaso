@@ -2,16 +2,24 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import type { FirebaseConfig } from '../types';
 
-// Firebase configuration from backend/.env
+// Firebase configuration - requires environment variables
 const firebaseConfig: FirebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBwAnMaGuFGWlQbLEE8zmkjDZL06QWaHcs",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "asikaso-1b474.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "asikaso-1b474",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "asikaso-1b474.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "685594328760",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:685594328760:web:ea42049b5c39d8398cfe4d",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-6B8LNQXXZ2"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+// Validate required config
+const requiredVars = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_PROJECT_ID', 'VITE_FIREBASE_APP_ID'];
+const missing = requiredVars.filter(v => !import.meta.env[v]);
+
+if (missing.length > 0) {
+  console.warn(`Warning: Missing Firebase config: ${missing.join(', ')}. App may not function correctly.`);
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
